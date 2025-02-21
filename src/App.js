@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import './App.css'; // Importing CSS for styling
+import Select from "react-select";            // 1) Import react-select
+import "./App.css";                           // 2) Import custom CSS
 
 function App() {
   // State for JSON input
@@ -18,25 +19,46 @@ function App() {
     document.title = "ABCD123"; // <-- Replace with your actual roll number if needed
   }, []);
 
+  // Options for the multi-select dropdown
+  const filterOptions = [
+    { value: "Numbers", label: "Numbers" },
+    { value: "Alphabets", label: "Alphabets" },
+    { value: "Highest Alphabet", label: "Highest Alphabet" },
+  ];
+
+  // Handle changes in the react-select multi-dropdown
+  const handleSelectChange = (selectedOptions) => {
+    if (!selectedOptions) {
+      setSelectedFilters([]);
+      return;
+    }
+    // Extract the 'value' from each selected option
+    setSelectedFilters(selectedOptions.map((opt) => opt.value));
+  };
+
   // Handle form submission
   const handleSubmit = async () => {
-    setLoading(true); // Set loading to true
-    setError(""); // Reset error state
+    setLoading(true);
+    setError("");
     let parsedData;
+
+    // 1) Validate JSON input
     try {
       parsedData = JSON.parse(jsonInput);
     } catch (e) {
       setError("Invalid JSON format! Please ensure your input is valid JSON.");
-      setLoading(false); // Reset loading state
+      setLoading(false);
       return;
     }
 
+    // 2) Check for "data" array
     if (!parsedData.data || !Array.isArray(parsedData.data)) {
       setError("JSON must contain a 'data' array field. Example: { 'data': ['M', '1', '334', '4', 'B'] }");
-      setLoading(false); // Reset loading state
+      setLoading(false);
       return;
     }
 
+    // 3) Send POST request to the backend
     try {
       const response = await fetch("https://two2bcs15937-bajaj-1.onrender.com/bfhl", {
         method: "POST",
@@ -45,6 +67,7 @@ function App() {
         },
         body: JSON.stringify(parsedData),
       });
+
       const result = await response.json();
 
       if (!response.ok) {
@@ -58,14 +81,8 @@ function App() {
       setError("Error calling the API: " + err.message);
       setServerResponse(null);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
-  };
-
-  // Handle changes in the multi-select dropdown
-  const handleSelectChange = (e) => {
-    const values = Array.from(e.target.selectedOptions, (option) => option.value);
-    setSelectedFilters(values);
   };
 
   // Based on the selected filters, compute what to display
@@ -117,7 +134,7 @@ function App() {
         Submit
       </button>
 
-      {loading && <div className="loading">Loading...</div>} {/* Loading indicator */}
+      {loading && <div className="loading">Loading...</div>}
 
       {error && (
         <div className="error-message">
@@ -125,6 +142,7 @@ function App() {
         </div>
       )}
 
+      {/* Show the server response and filtering options if we have a valid response */}
       {serverResponse && !error && (
         <div className="response-container">
           <h3>User Information</h3>
@@ -133,12 +151,18 @@ function App() {
           <p><strong>Roll Number:</strong> {serverResponse.roll_number}</p>
 
           <h3>Multi Filter</h3>
-          <select multiple={true} onChange={handleSelectChange} className="filter-select">
-            <option value="Numbers">Numbers</option>
-            <option value="Alphabets">Alphabets</option>
-            <option value="Highest Alphabet">Highest Alphabet</option>
-          </select>
+          <div className="multi-filter-container">
+            <Select
+              isMulti
+              options={filterOptions}
+              onChange={handleSelectChange}
+              placeholder="Select Filters..."
+              className="filter-select-container"
+              classNamePrefix="filter-select"
+            />
+          </div>
 
+          {/* Display filtered data */}
           {filteredData && (
             <div className="filtered-response">
               <h4>Filtered Response</h4>
