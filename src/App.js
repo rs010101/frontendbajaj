@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select";            // 1) Import react-select
-import "./App.css";                           // 2) Import custom CSS
+import Select from "react-select"; // For the multi-select dropdown
+import "./App.css";               // Custom CSS for styling
 
 function App() {
   // State for JSON input
@@ -14,35 +14,37 @@ function App() {
   // State for loading status
   const [loading, setLoading] = useState(false);
 
-  // Set the document title to your roll number
   useEffect(() => {
-    document.title = "ABCD123"; // <-- Replace with your actual roll number if needed
+    document.title = "22bcs15937";
   }, []);
 
-  // Options for the multi-select dropdown
+  // Multi-select dropdown options
   const filterOptions = [
     { value: "Numbers", label: "Numbers" },
     { value: "Alphabets", label: "Alphabets" },
     { value: "Highest Alphabet", label: "Highest Alphabet" },
   ];
 
-  // Handle changes in the react-select multi-dropdown
+  /**
+   * Handle changes in the react-select multi-dropdown
+   */
   const handleSelectChange = (selectedOptions) => {
     if (!selectedOptions) {
       setSelectedFilters([]);
       return;
     }
-    // Extract the 'value' from each selected option
     setSelectedFilters(selectedOptions.map((opt) => opt.value));
   };
 
-  // Handle form submission
+  /**
+   * Handle form submission (POST request to the backend)
+   */
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
     let parsedData;
 
-    // 1) Validate JSON input
+    // Validate JSON input
     try {
       parsedData = JSON.parse(jsonInput);
     } catch (e) {
@@ -51,14 +53,14 @@ function App() {
       return;
     }
 
-    // 2) Check for "data" array
+    // Check for "data" array
     if (!parsedData.data || !Array.isArray(parsedData.data)) {
-      setError("JSON must contain a 'data' array field. Example: { 'data': ['M', '1', '334', '4', 'B'] }");
+      setError("JSON must contain a 'data' array field. Example: { \"data\": [\"M\", \"1\", \"334\", \"4\", \"B\"] }");
       setLoading(false);
       return;
     }
 
-    // 3) Send POST request to the backend
+    // Make POST request to your backend
     try {
       const response = await fetch("https://two2bcs15937-bajaj-1.onrender.com/bfhl", {
         method: "POST",
@@ -85,7 +87,9 @@ function App() {
     }
   };
 
-  // Based on the selected filters, compute what to display
+  /**
+   * Based on the selected filters, decide what to display from the server response
+   */
   const getFilteredData = () => {
     if (!serverResponse) return null;
 
@@ -109,13 +113,15 @@ function App() {
     return output;
   };
 
+  // Get the filtered data to display
   const filteredData = getFilteredData();
 
   return (
     <div className="app-container">
-      <h1>Frontend for BFHL API</h1>
-      <p className="instructions">Please enter your JSON input below:</p>
+      <h1>BFHL Frontend</h1>
+      <p className="instructions">Enter your JSON input and click "Submit" to see the response.</p>
 
+      {/* JSON Input Section */}
       <div className="input-container">
         <label htmlFor="jsonInput">
           <strong>API Input</strong>
@@ -134,15 +140,17 @@ function App() {
         Submit
       </button>
 
+      {/* Loading Indicator */}
       {loading && <div className="loading">Loading...</div>}
 
+      {/* Error Message */}
       {error && (
         <div className="error-message">
           <strong>Error:</strong> {error}
         </div>
       )}
 
-      {/* Show the server response and filtering options if we have a valid response */}
+      {/* Server Response & Multi-Select Dropdown */}
       {serverResponse && !error && (
         <div className="response-container">
           <h3>User Information</h3>

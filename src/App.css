@@ -24,11 +24,11 @@ h1 {
   text-align: center;
 }
 
+/* Input container */
 .input-container {
   margin-bottom: 20px;
 }
 
-/* Textarea for JSON input */
 .json-input {
   width: 100%;
   padding: 10px;
@@ -62,6 +62,7 @@ h1 {
   color: blue;
   margin-top: 10px;
   text-align: center;
+  font-weight: bold;
 }
 
 /* Error message styling */
@@ -69,6 +70,7 @@ h1 {
   color: red;
   margin-top: 10px;
   text-align: center;
+  font-weight: bold;
 }
 
 /* Response container */
@@ -80,7 +82,6 @@ h1 {
   background-color: #f9f9f9;
 }
 
-/* Multi-filter container styling */
 .multi-filter-container {
   margin-top: 10px;
   margin-bottom: 20px;
@@ -91,7 +92,6 @@ h1 {
   margin-top: 10px;
 }
 
-/* Customize the select box */
 .filter-select__control {
   border: 2px solid #007bff;
   border-radius: 4px;
@@ -107,7 +107,7 @@ h1 {
   border-color: #0056b3;
 }
 
-/* The multi-value (selected chips) background color */
+/* Multi-value (selected chips) background color */
 .filter-select__multi-value {
   background-color: #007bff;
 }
